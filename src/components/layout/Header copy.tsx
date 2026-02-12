@@ -68,8 +68,7 @@ export const Header: React.FC<HeaderProps> = ({
   };
 
   return (
-    <>
-     <div
+    <div
       className="relative"
       style={{
         backgroundImage: `url(${background})`,
@@ -84,7 +83,7 @@ export const Header: React.FC<HeaderProps> = ({
       <div className="max-w-7xl mx-auto relative z-10">
         <header className="relative text-[#9F0712FF]">
           {/* DESKTOP/TABLET TOP SECTION */}
-          <div className="hidden md:block border-b-2 border-red-600">
+          <div className="hidden md:block border-b-4 border-red-600">
             <div className="px-4 sm:px-6 lg:px-8 py-3 sm:py-4">
               <div className="flex justify-between items-center gap-2 sm:gap-4">
                 {/* LEFT SECTION - Logo & Agency Info */}
@@ -200,12 +199,46 @@ export const Header: React.FC<HeaderProps> = ({
               </div>
 
               {/* Second Row - Child Navigation */}
-             
+              <div className="flex justify-start bg-[#F9ECC2]/30">
+                {isUnderPermits
+                  ? permitNavItems.map((link) => {
+                      const isChildActive = isActive(link.path);
+                      return (
+                        <Link
+                          key={link.path}
+                          to={link.path}
+                          className={`px-4 lg:px-5 py-2 text-sm lg:text-base font-medium transition-all whitespace-nowrap ${
+                            isChildActive
+                              ? 'bg-white text-[#9F0712FF] border-l-4 border-red-600 shadow-sm'
+                              : 'text-[#9F0712FF] hover:bg-white/50 border-l-4 border-transparent'
+                          }`}
+                        >
+                          {link.label}
+                        </Link>
+                      );
+                    })
+                  : childNavItems.map((link) => {
+                      const isChildActive = isActive(link.path);
+                      return (
+                        <Link
+                          key={link.path}
+                          to={link.path}
+                          className={`px-4 lg:px-5 py-2 text-sm lg:text-base font-medium transition-all whitespace-nowrap ${
+                            isChildActive
+                              ? 'bg-white text-[#9F0712FF] border-l-4 border-red-600 shadow-sm'
+                              : 'text-[#9F0712FF] hover:bg-white/50 border-l-4 border-transparent'
+                          }`}
+                        >
+                          {link.label}
+                        </Link>
+                      );
+                    })}
+              </div>
             </div>
           </nav>
 
           {/* MOBILE HEADER - Logo + Text + Hamburger */}
-          <div className="md:hidden border-b-2 border-red-600">
+          <div className="md:hidden border-b-4 border-red-600">
             <div className="px-4 flex justify-between items-center py-2">
               {/* Logo + Text */}
               <div className="flex items-center gap-2">
@@ -254,7 +287,7 @@ export const Header: React.FC<HeaderProps> = ({
               <div className="md:hidden fixed inset-0 z-50 bg-white animate-in slide-in-from-right duration-300 overflow-y-auto">
                 <div className="flex flex-col h-full">
                   {/* Header - Same as external header */}
-                  <div className="px-4 py-3 border-b-2 border-red-600 bg-[#F9ECC2]">
+                  <div className="px-4 py-3 border-b-4 border-red-600 bg-[#F9ECC2]">
                     <div className="flex justify-between items-center">
                       {/* Logo + Text */}
                       <div className="flex items-center gap-2">
@@ -416,45 +449,5 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
       )}
     </div>
-    <div className="shadow-md border-b border-gray-200">
-    <div className="max-w-7xl mx-auto py-3 px-4 sm:px-6 lg:px-8">
-                  {isUnderPermits
-                    ? permitNavItems.map((link) => {
-                        const isChildActive = isActive(link.path);
-                        return (
-                          <Link
-                            key={link.path}
-                            to={link.path}
-                            className={`px-4 lg:px-5 py-2 text-sm lg:text-base font-medium transition-all whitespace-nowrap ${
-                              isChildActive
-                                ? 'bg-white text-[#9F0712FF] border-l-4 border-red-600 shadow-sm'
-                                : 'text-[#9F0712FF] hover:bg-white/50 border-l-4 border-transparent'
-                            }`}
-                          >
-                            {link.label}
-                          </Link>
-                        );
-                      })
-                    : childNavItems.map((link) => {
-                        const isChildActive = isActive(link.path);
-                        return (
-                          <Link
-                            key={link.path}
-                            to={link.path}
-                            className={`px-4 lg:px-5 py-2 text-sm lg:text-base font-medium transition-all whitespace-nowrap ${
-                              isChildActive
-                                ? 'bg-white text-[#9F0712FF] border-l-4 border-red-600 shadow-sm'
-                                : 'text-[#9F0712FF] hover:bg-white/50 border-l-4 border-transparent'
-                            }`}
-                          >
-                            {link.label}
-                          </Link>
-                        );
-                      })}
-                </div>
-    </div>
-
-    </>
-   
   );
 };

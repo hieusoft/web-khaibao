@@ -26,61 +26,63 @@ import {
     DialogFooter,
 } from "@/components/ui/dialog";
 import { Plus, Trash2 } from "lucide-react";
+import { Warehouse } from "@/types/auth";
 
-/* =======================
-   EMPTY ROW
-======================= */
-const emptyWarehouse = {
-    id: null,
-    shortName: "",
+interface WarehouseData {
+    id?: number;
+    name: string;
+    code: string;
+    country: string;
+    state: string;
+    address: string;
+}
+
+interface WarehouseTabProps {
+    warehouses?: Warehouse[];
+}
+
+const emptyWarehouse: WarehouseData = {
+    name: "",
+    code: "",
     country: "",
-    province: "",
+    state: "",
     address: "",
 };
 
-/* =======================
-   COMPONENT
-======================= */
-const WarehouseTab = ({ warehouses: fetchedWarehouses = [] }) => {
-    const [warehouses, setWarehouses] = useState([]);
-    const [deleteDialog, setDeleteDialog] = useState({
+const WarehouseTab: React.FC<WarehouseTabProps> = ({ warehouses = [] }) => {
+    const [warehouseList, setWarehouseList] = useState<WarehouseData[]>([]);
+    const [deleteDialog, setDeleteDialog] = useState<{ open: boolean; index: number | null }>({
         open: false,
         index: null,
     });
 
-    /* =======================
-       MAP DATA FETCH → TABLE
-    ======================= */
     useEffect(() => {
-        if (fetchedWarehouses && fetchedWarehouses.length > 0) {
-            const mappedData = fetchedWarehouses.map((item) => ({
+        if (warehouses && warehouses.length > 0) {
+            const mappedData = warehouses.map((item) => ({
                 id: item.id,
-                shortName: item.code || "",
+                name: item.name || "",
+                code: item.code || "",
                 country: item.country || "",
-                province: item.state || "",
+                state: item.state || "",
                 address: item.address || "",
             }));
-
-            setWarehouses(mappedData);
+            setWarehouseList(mappedData);
         } else {
-            setWarehouses([{ ...emptyWarehouse }]);
+            setWarehouseList([{ ...emptyWarehouse }]);
         }
-    }, [fetchedWarehouses]);
+    }, [warehouses]);
 
-    /* =======================
-       HANDLERS
-    ======================= */
     const addRow = () => {
-        setWarehouses((prev) => [...prev, { ...emptyWarehouse }]);
+        setWarehouseList((prev) => [...prev, { ...emptyWarehouse }]);
     };
 
-    const removeRow = (index) => {
+    const removeRow = (index: number) => {
         setDeleteDialog({ open: true, index });
     };
 
     const confirmDelete = () => {
         if (deleteDialog.index !== null) {
-            setWarehouses((prev) =>
+            setWarehouseList((prev) =>
                 prev.filter((_, i) => i !== deleteDialog.index)
             );
         }
@@ -91,126 +93,98 @@ const WarehouseTab = ({ warehouses: fetchedWarehouses = [] }) => {
         setDeleteDialog({ open: false, index: null });
     };
 
-    const updateWarehouse = (index, field, value) => {
-        setWarehouses((prev) =>
+    const updateWarehouse = (index: number, field: keyof WarehouseData, value: string) => {
+        setWarehouseList((prev) =>
             prev.map((item, i) =>
                 i === index ? { ...item, [field]: value } : item
             )
         );
     };
 
-    /* =======================
-       RENDER
-    ======================= */
     return (
         <Card className="border-0 shadow-none rounded-none">
             <CardContent className="space-y-4">
                 <Table>
-                    <TableHeader className="transform translate-x-5">
+                    <TableHeader>
                         <TableRow>
-                            <TableHead>Tên viết tắt</TableHead>
+                            <TableHead>Tên kho</TableHead>
+                            <TableHead>Mã kho</TableHead>
                             <TableHead>Quốc gia</TableHead>
                             <TableHead>Tỉnh / Thành phố</TableHead>
                             <TableHead>Địa chỉ chi tiết</TableHead>
-                            <TableHead />
+                            <TableHead className="w-12" />
                         </TableRow>
                     </TableHeader>
-
                     <TableBody>
-                        {warehouses.map((warehouse, index) => (
+                        {warehouseList.map((warehouse, index) => (
                             <TableRow key={warehouse.id ?? index}>
                                 <TableCell>
                                     <Input
-                                        value={warehouse.shortName}
+                                        value={warehouse.name}
                                         onChange={(e) =>
-                                            updateWarehouse(
-                                                index,
-                                                "shortName",
-                                                e.target.value
-                                            )
+                                            updateWarehouse(index, "name", e.target.value)
                                         }
-                                        placeholder="Tên viết tắt kho"
+                                        placeholder="Tên kho"
                                         className="border-0 bg-transparent focus:bg-white"
                                     />
                                 </TableCell>
-
+                                <TableCell>
+                                    <Input
+                                        value={warehouse.code}
+                                        onChange={(e) =>
+                                            updateWarehouse(index, "code", e.target.value)
+                                        }
+                                        placeholder="Mã kho"
+                                        className="border-0 bg-transparent focus:bg-white"
+                                    />
+                                </TableCell>
                                 <TableCell>
                                     <Select
                                         value={warehouse.country}
                                         onValueChange={(value) =>
-                                            updateWarehouse(
-                                                index,
-                                                "country",
-                                                value
-                                            )
+                                            updateWarehouse(index, "country", value)
                                         }
                                     >
                                         <SelectTrigger className="border-0 bg-transparent focus:bg-white">
                                             <SelectValue placeholder="Chọn quốc gia" />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            <SelectItem value="Việt Nam">
-                                                Việt Nam
-                                            </SelectItem>
-                                            <SelectItem value="Hoa Kỳ">
-                                                Hoa Kỳ
-                                            </SelectItem>
-                                            <SelectItem value="Nhật Bản">
-                                                Nhật Bản
-                                            </SelectItem>
-                                            <SelectItem value="Trung Quốc">
-                                                Trung Quốc
-                                            </SelectItem>
+                                            <SelectItem value="Việt Nam">Việt Nam</SelectItem>
+                                            <SelectItem value="Hoa Kỳ">Hoa Kỳ</SelectItem>
+                                            <SelectItem value="Nhật Bản">Nhật Bản</SelectItem>
+                                            <SelectItem value="Trung Quốc">Trung Quốc</SelectItem>
                                         </SelectContent>
                                     </Select>
                                 </TableCell>
-
                                 <TableCell>
                                     <Select
-                                        value={warehouse.province}
+                                        value={warehouse.state}
                                         onValueChange={(value) =>
-                                            updateWarehouse(
-                                                index,
-                                                "province",
-                                                value
-                                            )
+                                            updateWarehouse(index, "state", value)
                                         }
                                     >
                                         <SelectTrigger className="border-0 bg-transparent focus:bg-white">
                                             <SelectValue placeholder="Chọn tỉnh/thành phố" />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            <SelectItem value="TP. Hồ Chí Minh">
-                                                TP. Hồ Chí Minh
-                                            </SelectItem>
-                                            <SelectItem value="Hà Nội">
-                                                Hà Nội
-                                            </SelectItem>
-                                            <SelectItem value="Đà Nẵng">
-                                                Đà Nẵng
-                                            </SelectItem>
-                                            <SelectItem value="Hải Phòng">
-                                                Hải Phòng
-                                            </SelectItem>
+                                            <SelectItem value="Hà Nội">Hà Nội</SelectItem>
+                                            <SelectItem value="TP. Hồ Chí Minh">TP. Hồ Chí Minh</SelectItem>
+                                            <SelectItem value="Đà Nẵng">Đà Nẵng</SelectItem>
+                                            <SelectItem value="Hải Phòng">Hải Phòng</SelectItem>
+                                            <SelectItem value="Cần Thơ">Cần Thơ</SelectItem>
                                         </SelectContent>
                                     </Select>
                                 </TableCell>
-
                                 <TableCell>
                                     <Input
                                         value={warehouse.address}
                                         onChange={(e) =>
-                                            updateWarehouse(
-                                                index,
-                                                "address",
-                                                e.target.value
-                                            )
+                                            updateWarehouse(index, "address", e.target.value)
                                         }
                                         placeholder="Nhập địa chỉ chi tiết"
                                         className="border-0 bg-transparent focus:bg-white"
                                     />
                                 </TableCell>
-
                                 <TableCell>
                                     <Button
                                         type="button"
@@ -224,18 +198,17 @@ const WarehouseTab = ({ warehouses: fetchedWarehouses = [] }) => {
                                 </TableCell>
                             </TableRow>
                         ))}
-
-                        {/* ADD ROW */}
                         <TableRow>
-                            <TableCell colSpan={5} className="pt-4">
+                            <TableCell colSpan={6} className="pt-4">
                                 <Button
                                     type="button"
                                     variant="outline"
                                     size="sm"
                                     onClick={addRow}
+                                    className="w-auto px-4"
                                 >
-                                    <Plus className="mr-2 h-4 w-4" />
-                                    Thêm dòng
+                                    <Plus className="h-4 w-4" />
+                                    <span className="ml-2 hidden sm:inline">Thêm dòng</span>
                                 </Button>
                             </TableCell>
                         </TableRow>
@@ -243,25 +216,20 @@ const WarehouseTab = ({ warehouses: fetchedWarehouses = [] }) => {
                 </Table>
             </CardContent>
 
-            {/* CONFIRM DELETE */}
             <Dialog open={deleteDialog.open} onOpenChange={cancelDelete}>
                 <DialogContent>
                     <DialogHeader>
-                        <DialogTitle>Xác nhận xoá</DialogTitle>
+                        <DialogTitle>Xác nhận xóa</DialogTitle>
                         <DialogDescription>
-                            Bạn có chắc chắn muốn xoá kho này không? Hành động
-                            này không thể hoàn tác.
+                            Bạn có chắc chắn muốn xóa kho này không? Hành động này không thể hoàn tác.
                         </DialogDescription>
                     </DialogHeader>
                     <DialogFooter>
                         <Button variant="outline" onClick={cancelDelete}>
-                            Huỷ
+                            Hủy
                         </Button>
-                        <Button
-                            variant="destructive"
-                            onClick={confirmDelete}
-                        >
-                            Xoá
+                        <Button variant="destructive" onClick={confirmDelete}>
+                            Xóa
                         </Button>
                     </DialogFooter>
                 </DialogContent>

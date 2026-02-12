@@ -20,17 +20,34 @@ import {
 } from "@/components/ui/dialog";
 import { Plus, Trash2 } from "lucide-react";
 
-const emptyLegalPerson = {
-    id: null,
+interface LegalPerson {
+    id?: number;
+    name: string;
+    cccd: string;
+    taxCode: string;
+    phone: string;
+}
+
+interface LegalInfoTabProps {
+    legalHumans?: Array<{
+        id?: number;
+        name?: string;
+        cccd_number?: string;
+        tax_code?: string;
+        phone?: string;
+    }>;
+}
+
+const emptyLegalPerson: LegalPerson = {
     name: "",
     cccd: "",
     taxCode: "",
     phone: "",
 };
 
-const LegalInfoTab = ({ legalHumans = [] }) => {
-    const [legalPersons, setLegalPersons] = useState([]);
-    const [deleteDialog, setDeleteDialog] = useState({
+const LegalInfoTab: React.FC<LegalInfoTabProps> = ({ legalHumans = [] }) => {
+    const [legalPersons, setLegalPersons] = useState<LegalPerson[]>([]);
+    const [deleteDialog, setDeleteDialog] = useState<{ open: boolean; index: number | null }>({
         open: false,
         index: null,
     });
@@ -44,21 +61,17 @@ const LegalInfoTab = ({ legalHumans = [] }) => {
                 taxCode: item.tax_code || "",
                 phone: item.phone || "",
             }));
-
             setLegalPersons(mappedData);
         } else {
             setLegalPersons([{ ...emptyLegalPerson }]);
         }
     }, [legalHumans]);
 
-    /* =======================
-       HANDLER
-    ======================= */
     const addRow = () => {
         setLegalPersons((prev) => [...prev, { ...emptyLegalPerson }]);
     };
 
-    const removeRow = (index) => {
+    const removeRow = (index: number) => {
         setDeleteDialog({ open: true, index });
     };
 
@@ -75,7 +88,7 @@ const LegalInfoTab = ({ legalHumans = [] }) => {
         setDeleteDialog({ open: false, index: null });
     };
 
-    const updateLegalPerson = (index, field, value) => {
+    const updateLegalPerson = (index: number, field: keyof LegalPerson, value: string) => {
         setLegalPersons((prev) =>
             prev.map((item, i) =>
                 i === index ? { ...item, [field]: value } : item
@@ -83,23 +96,19 @@ const LegalInfoTab = ({ legalHumans = [] }) => {
         );
     };
 
-    /* =======================
-       RENDER
-    ======================= */
     return (
         <Card className="border-0 shadow-none rounded-none">
             <CardContent className="space-y-4">
                 <Table>
-                    <TableHeader className="transform translate-x-5">
+                    <TableHeader>
                         <TableRow>
                             <TableHead>Tên pháp nhân</TableHead>
                             <TableHead>CCCD</TableHead>
                             <TableHead>Mã số thuế</TableHead>
                             <TableHead>Điện thoại</TableHead>
-                            <TableHead />
+                            <TableHead className="w-12" />
                         </TableRow>
                     </TableHeader>
-
                     <TableBody>
                         {legalPersons.map((person, index) => (
                             <TableRow key={person.id ?? index}>
@@ -107,62 +116,42 @@ const LegalInfoTab = ({ legalHumans = [] }) => {
                                     <Input
                                         value={person.name}
                                         onChange={(e) =>
-                                            updateLegalPerson(
-                                                index,
-                                                "name",
-                                                e.target.value
-                                            )
+                                            updateLegalPerson(index, "name", e.target.value)
                                         }
                                         placeholder="Nhập tên pháp nhân"
                                         className="border-0 bg-transparent focus:bg-white"
                                     />
                                 </TableCell>
-
                                 <TableCell>
                                     <Input
                                         value={person.cccd}
                                         onChange={(e) =>
-                                            updateLegalPerson(
-                                                index,
-                                                "cccd",
-                                                e.target.value
-                                            )
+                                            updateLegalPerson(index, "cccd", e.target.value)
                                         }
                                         placeholder="Nhập số CCCD"
                                         className="border-0 bg-transparent focus:bg-white"
                                     />
                                 </TableCell>
-
                                 <TableCell>
                                     <Input
                                         value={person.taxCode}
                                         onChange={(e) =>
-                                            updateLegalPerson(
-                                                index,
-                                                "taxCode",
-                                                e.target.value
-                                            )
+                                            updateLegalPerson(index, "taxCode", e.target.value)
                                         }
                                         placeholder="Nhập mã số thuế"
                                         className="border-0 bg-transparent focus:bg-white"
                                     />
                                 </TableCell>
-
                                 <TableCell>
                                     <Input
                                         value={person.phone}
                                         onChange={(e) =>
-                                            updateLegalPerson(
-                                                index,
-                                                "phone",
-                                                e.target.value
-                                            )
+                                            updateLegalPerson(index, "phone", e.target.value)
                                         }
                                         placeholder="Nhập số điện thoại"
                                         className="border-0 bg-transparent focus:bg-white"
                                     />
                                 </TableCell>
-
                                 <TableCell>
                                     <Button
                                         type="button"
@@ -176,8 +165,6 @@ const LegalInfoTab = ({ legalHumans = [] }) => {
                                 </TableCell>
                             </TableRow>
                         ))}
-
-                        {/* ADD ROW */}
                         <TableRow>
                             <TableCell colSpan={5} className="pt-4">
                                 <Button
@@ -185,9 +172,10 @@ const LegalInfoTab = ({ legalHumans = [] }) => {
                                     variant="outline"
                                     size="sm"
                                     onClick={addRow}
+                                    className="w-auto px-4"
                                 >
-                                    <Plus className="mr-2 h-4 w-4" />
-                                    Thêm dòng
+                                    <Plus className="h-4 w-4" />
+                                    <span className="ml-2 hidden sm:inline">Thêm dòng</span>
                                 </Button>
                             </TableCell>
                         </TableRow>
@@ -195,25 +183,20 @@ const LegalInfoTab = ({ legalHumans = [] }) => {
                 </Table>
             </CardContent>
 
-            {/* CONFIRM DELETE */}
             <Dialog open={deleteDialog.open} onOpenChange={cancelDelete}>
                 <DialogContent>
                     <DialogHeader>
-                        <DialogTitle>Xác nhận xoá</DialogTitle>
+                        <DialogTitle>Xác nhận xóa</DialogTitle>
                         <DialogDescription>
-                            Bạn có chắc chắn muốn xoá pháp nhân này không?
-                            Hành động này không thể hoàn tác.
+                            Bạn có chắc chắn muốn xóa pháp nhân này không? Hành động này không thể hoàn tác.
                         </DialogDescription>
                     </DialogHeader>
                     <DialogFooter>
                         <Button variant="outline" onClick={cancelDelete}>
-                            Huỷ
+                            Hủy
                         </Button>
-                        <Button
-                            variant="destructive"
-                            onClick={confirmDelete}
-                        >
-                            Xoá
+                        <Button variant="destructive" onClick={confirmDelete}>
+                            Xóa
                         </Button>
                     </DialogFooter>
                 </DialogContent>

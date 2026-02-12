@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -26,17 +26,30 @@ import {
     DialogFooter,
 } from "@/components/ui/dialog";
 import { Plus, Trash2 } from "lucide-react";
+import { CompanyChild } from '@/types/auth';
 
-const emptyRelatedCompany = {
+interface RelatedCompany {
+    id?: number;
+    name: string;
+    taxCode: string;
+    businessType: string;
+    status: string;
+}
+
+interface RelatedCompaniesTabProps {
+    companyChild?: CompanyChild[];
+}
+
+const emptyRelatedCompany: RelatedCompany = {
     name: "",
     taxCode: "",
     businessType: "",
     status: "",
 };
 
-const RelatedCompaniesTab = ({ companyChild = [] }) => {
-    const [companies, setCompanies] = useState([]);
-    const [deleteDialog, setDeleteDialog] = useState({ open: false, index: null });
+const RelatedCompaniesTab: React.FC<RelatedCompaniesTabProps> = ({ companyChild = [] }) => {
+    const [companies, setCompanies] = useState<RelatedCompany[]>([]);
+    const [deleteDialog, setDeleteDialog] = useState<{ open: boolean; index: number | null }>({ open: false, index: null });
 
     useEffect(() => {
         if (companyChild && companyChild.length > 0) {
@@ -49,7 +62,7 @@ const RelatedCompaniesTab = ({ companyChild = [] }) => {
             }));
             setCompanies(mappedCompanies);
         } else {
-            setCompanies([emptyRelatedCompany]);
+            setCompanies([{ ...emptyRelatedCompany }]);
         }
     }, [companyChild]);
 
@@ -170,8 +183,8 @@ const RelatedCompaniesTab = ({ companyChild = [] }) => {
                                     onClick={addRow}
                                     className="w-auto px-4 py-2"
                                 >
-                                    <Plus className="mr-2 h-4 w-4" />
-                                    Thêm dòng
+                                    <Plus className="h-4 w-4" />
+                                    <span className="ml-2 hidden sm:inline">Thêm dòng</span>
                                 </Button>
                             </TableCell>
                         </TableRow>

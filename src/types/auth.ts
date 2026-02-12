@@ -39,6 +39,14 @@ export interface Factory {
   phone: string;
 }
 
+export interface CompanyChild {
+  id: number;
+  name: string;
+  tax_code: string;
+  business_type: string;
+  status: string;
+}
+
 export interface ProfileData {
   id: number;
   name: string;
@@ -51,10 +59,11 @@ export interface ProfileData {
   status: string;
   country: string;
   state: string;
+  city: string;
   district: string;
   ward: string;
   address: string;
-  company_child: string[];
+  company_child: CompanyChild[];
   legal_humans: LegalHuman[];
   warehouses: Warehouse[];
   factories: Factory[];

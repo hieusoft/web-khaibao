@@ -27,64 +27,72 @@ import {
 } from "@/components/ui/dialog";
 import { Plus, Trash2 } from "lucide-react";
 
-/* =======================
-   EMPTY ROW
-======================= */
-const emptyFactory = {
-    id: null,
+interface FactoryData {
+    id?: number;
+    name: string;
+    country: string;
+    state: string;
+    district: string;
+    ward: string;
+    address: string;
+}
+
+interface FactoryTabProps {
+    factories?: Array<{
+        id?: number;
+        name?: string;
+        country?: string;
+        state?: string;
+        district?: string;
+        ward?: string;
+        address?: string;
+    }>;
+}
+
+const emptyFactory: FactoryData = {
     name: "",
     country: "",
-    province: "",
+    state: "",
     district: "",
     ward: "",
     address: "",
 };
 
-/* =======================
-   COMPONENT
-======================= */
-const FactoryTab = ({ factorys = [] }) => {
-    const [factories, setFactories] = useState([]);
-    const [deleteDialog, setDeleteDialog] = useState({
+const FactoryTab: React.FC<FactoryTabProps> = ({ factories = [] }) => {
+    const [factoryList, setFactoryList] = useState<FactoryData[]>([]);
+    const [deleteDialog, setDeleteDialog] = useState<{ open: boolean; index: number | null }>({
         open: false,
         index: null,
     });
 
-    /* =======================
-       MAP DATA FETCH → TABLE
-    ======================= */
     useEffect(() => {
-        if (factorys && factorys.length > 0) {
-            const mappedData = factorys.map((item) => ({
+        if (factories && factories.length > 0) {
+            const mappedData = factories.map((item) => ({
                 id: item.id,
                 name: item.name || "",
                 country: item.country || "",
-                province: item.state || "",
+                state: item.state || "",
                 district: item.district || "",
                 ward: item.ward || "",
-                address: item.adreess || item.address || "",
+                address: item.address || "",
             }));
-
-            setFactories(mappedData);
+            setFactoryList(mappedData);
         } else {
-            setFactories([{ ...emptyFactory }]);
+            setFactoryList([{ ...emptyFactory }]);
         }
-    }, [factorys]);
+    }, [factories]);
 
-    /* =======================
-       HANDLERS
-    ======================= */
     const addRow = () => {
-        setFactories((prev) => [...prev, { ...emptyFactory }]);
+        setFactoryList((prev) => [...prev, { ...emptyFactory }]);
     };
 
-    const removeRow = (index) => {
+    const removeRow = (index: number) => {
         setDeleteDialog({ open: true, index });
     };
 
     const confirmDelete = () => {
         if (deleteDialog.index !== null) {
-            setFactories((prev) =>
+            setFactoryList((prev) =>
                 prev.filter((_, i) => i !== deleteDialog.index)
             );
         }
@@ -95,17 +103,14 @@ const FactoryTab = ({ factorys = [] }) => {
         setDeleteDialog({ open: false, index: null });
     };
 
-    const updateFactory = (index, field, value) => {
-        setFactories((prev) =>
+    const updateFactory = (index: number, field: keyof FactoryData, value: string) => {
+        setFactoryList((prev) =>
             prev.map((item, i) =>
                 i === index ? { ...item, [field]: value } : item
             )
         );
     };
 
-    /* =======================
-       RENDER
-    ======================= */
     return (
         <Card className="border-0 shadow-none rounded-none">
             <CardContent className="space-y-4">
@@ -118,135 +123,89 @@ const FactoryTab = ({ factorys = [] }) => {
                             <TableHead>Quận / Huyện</TableHead>
                             <TableHead>Phường / Xã</TableHead>
                             <TableHead>Địa chỉ chi tiết</TableHead>
-                            <TableHead className="w-16" />
+                            <TableHead className="w-12" />
                         </TableRow>
                     </TableHeader>
-
                     <TableBody>
-                        {factories.map((factory, index) => (
+                        {factoryList.map((factory, index) => (
                             <TableRow key={factory.id ?? index}>
                                 <TableCell>
                                     <Input
                                         value={factory.name}
                                         onChange={(e) =>
-                                            updateFactory(
-                                                index,
-                                                "name",
-                                                e.target.value
-                                            )
+                                            updateFactory(index, "name", e.target.value)
                                         }
                                         placeholder="Tên nhà máy"
                                         className="border-0 bg-transparent focus:bg-white"
                                     />
                                 </TableCell>
-
                                 <TableCell>
                                     <Select
                                         value={factory.country}
                                         onValueChange={(value) =>
-                                            updateFactory(
-                                                index,
-                                                "country",
-                                                value
-                                            )
+                                            updateFactory(index, "country", value)
                                         }
                                     >
                                         <SelectTrigger className="border-0 bg-transparent focus:bg-white">
                                             <SelectValue placeholder="Chọn quốc gia" />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            <SelectItem value="Việt Nam">
-                                                Việt Nam
-                                            </SelectItem>
-                                            <SelectItem value="Hoa Kỳ">
-                                                Hoa Kỳ
-                                            </SelectItem>
-                                            <SelectItem value="Nhật Bản">
-                                                Nhật Bản
-                                            </SelectItem>
-                                            <SelectItem value="Trung Quốc">
-                                                Trung Quốc
-                                            </SelectItem>
+                                            <SelectItem value="Việt Nam">Việt Nam</SelectItem>
+                                            <SelectItem value="Hoa Kỳ">Hoa Kỳ</SelectItem>
+                                            <SelectItem value="Nhật Bản">Nhật Bản</SelectItem>
+                                            <SelectItem value="Trung Quốc">Trung Quốc</SelectItem>
                                         </SelectContent>
                                     </Select>
                                 </TableCell>
-
                                 <TableCell>
                                     <Select
-                                        value={factory.province}
+                                        value={factory.state}
                                         onValueChange={(value) =>
-                                            updateFactory(
-                                                index,
-                                                "province",
-                                                value
-                                            )
+                                            updateFactory(index, "state", value)
                                         }
                                     >
                                         <SelectTrigger className="border-0 bg-transparent focus:bg-white">
                                             <SelectValue placeholder="Chọn tỉnh/thành phố" />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            <SelectItem value="Tỉnh Hà Nam">
-                                                Tỉnh Hà Nam
-                                            </SelectItem>
-                                            <SelectItem value="TP. Hồ Chí Minh">
-                                                TP. Hồ Chí Minh
-                                            </SelectItem>
-                                            <SelectItem value="Hà Nội">
-                                                Hà Nội
-                                            </SelectItem>
-                                            <SelectItem value="Đà Nẵng">
-                                                Đà Nẵng
-                                            </SelectItem>
+                                            <SelectItem value="Hà Nội">Hà Nội</SelectItem>
+                                            <SelectItem value="TP. Hồ Chí Minh">TP. Hồ Chí Minh</SelectItem>
+                                            <SelectItem value="Đà Nẵng">Đà Nẵng</SelectItem>
+                                            <SelectItem value="Hải Phòng">Hải Phòng</SelectItem>
+                                            <SelectItem value="Cần Thơ">Cần Thơ</SelectItem>
                                         </SelectContent>
                                     </Select>
                                 </TableCell>
-
                                 <TableCell>
                                     <Input
                                         value={factory.district}
                                         onChange={(e) =>
-                                            updateFactory(
-                                                index,
-                                                "district",
-                                                e.target.value
-                                            )
+                                            updateFactory(index, "district", e.target.value)
                                         }
-                                        placeholder="Nhập quận / huyện"
+                                        placeholder="Nhập quận/huyện"
                                         className="border-0 bg-transparent focus:bg-white"
                                     />
                                 </TableCell>
-
                                 <TableCell>
                                     <Input
                                         value={factory.ward}
                                         onChange={(e) =>
-                                            updateFactory(
-                                                index,
-                                                "ward",
-                                                e.target.value
-                                            )
+                                            updateFactory(index, "ward", e.target.value)
                                         }
-                                        placeholder="Nhập phường / xã"
+                                        placeholder="Nhập phường/xã"
                                         className="border-0 bg-transparent focus:bg-white"
                                     />
                                 </TableCell>
-
                                 <TableCell>
                                     <Input
                                         value={factory.address}
                                         onChange={(e) =>
-                                            updateFactory(
-                                                index,
-                                                "address",
-                                                e.target.value
-                                            )
+                                            updateFactory(index, "address", e.target.value)
                                         }
                                         placeholder="Nhập địa chỉ chi tiết"
                                         className="border-0 bg-transparent focus:bg-white"
                                     />
                                 </TableCell>
-
                                 <TableCell>
                                     <Button
                                         type="button"
@@ -260,8 +219,6 @@ const FactoryTab = ({ factorys = [] }) => {
                                 </TableCell>
                             </TableRow>
                         ))}
-
-                        {/* ADD ROW */}
                         <TableRow>
                             <TableCell colSpan={7} className="pt-4">
                                 <Button
@@ -269,9 +226,10 @@ const FactoryTab = ({ factorys = [] }) => {
                                     variant="outline"
                                     size="sm"
                                     onClick={addRow}
+                                    className="w-auto px-4"
                                 >
-                                    <Plus className="mr-2 h-4 w-4" />
-                                    Thêm dòng
+                                    <Plus className="h-4 w-4" />
+                                    <span className="ml-2 hidden sm:inline">Thêm dòng</span>
                                 </Button>
                             </TableCell>
                         </TableRow>
@@ -279,25 +237,20 @@ const FactoryTab = ({ factorys = [] }) => {
                 </Table>
             </CardContent>
 
-            {/* CONFIRM DELETE */}
             <Dialog open={deleteDialog.open} onOpenChange={cancelDelete}>
                 <DialogContent>
                     <DialogHeader>
-                        <DialogTitle>Xác nhận xoá</DialogTitle>
+                        <DialogTitle>Xác nhận xóa</DialogTitle>
                         <DialogDescription>
-                            Bạn có chắc chắn muốn xoá nhà máy này không? Hành
-                            động này không thể hoàn tác.
+                            Bạn có chắc chắn muốn xóa nhà máy này không? Hành động này không thể hoàn tác.
                         </DialogDescription>
                     </DialogHeader>
                     <DialogFooter>
                         <Button variant="outline" onClick={cancelDelete}>
-                            Huỷ
+                            Hủy
                         </Button>
-                        <Button
-                            variant="destructive"
-                            onClick={confirmDelete}
-                        >
-                            Xoá
+                        <Button variant="destructive" onClick={confirmDelete}>
+                            Xóa
                         </Button>
                     </DialogFooter>
                 </DialogContent>
