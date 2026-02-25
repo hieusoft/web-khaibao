@@ -32,10 +32,10 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({
 
       {/* Menu Panel */}
       <div className="md:hidden fixed inset-0 z-50 bg-white animate-in slide-in-from-right duration-300 overflow-y-auto">
-        <div className="flex flex-col h-full font-['Arimo']">
+        <div className="flex flex-col h-full">
           
           {/* Mobile Header (Inside Menu) */}
-          <div className="px-4 py-3 border-b-2 border-red-600 bg-[#F9ECC2]">
+          <div className="px-4 border-b-2 border-red-600 bg-[#F9ECC2]">
             <div className="flex justify-between items-center">
               <div className="flex items-center gap-2">
                 <img src={logo} alt="logo" className="w-8 h-8 rounded object-contain" />

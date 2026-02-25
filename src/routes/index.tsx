@@ -8,7 +8,8 @@ import { DashboardPage } from '@/pages/DashboardPage';
 import { ProfilePage } from '@/pages/ProfilePage';
 import { NotFoundPage } from '@/pages/NotFoundPage';
 import ImportDeclarationList from '@/pages/import_pages_declaration/ImportDeclarationList';
-import CreateImportOrder from '@/pages/import_pages_declaration/create/CreateImportOrder';
+import { ImportDeclarationPage } from '@/pages/importdeclarationpage';
+
 
 export const router = createBrowserRouter([
   {
@@ -55,21 +56,7 @@ export const router = createBrowserRouter([
     path: '/declaration/import',
     element: (
       <ProtectedRoute>
-        <MainLayout>
-          <ImportDeclarationList />
-        </MainLayout>
-
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: '/declaration/import/new',
-    element: (
-      <ProtectedRoute>
-        <MainLayout>
-          <CreateImportOrder />
-        </MainLayout>
-
+        <ImportDeclarationPage />
       </ProtectedRoute>
     ),
   },

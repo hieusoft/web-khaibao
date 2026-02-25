@@ -20,7 +20,7 @@ export const LogoutDialog: React.FC<LogoutDialogProps> = ({ isOpen, onClose, onC
       />
 
       {/* Modal Content */}
-      <div className="relative bg-white rounded-lg shadow-xl max-w-md w-full p-6 animate-in zoom-in-95 duration-200 font-['Arimo']">
+      <div className="relative bg-white rounded-lg shadow-xl max-w-md w-full p-6 animate-in zoom-in-95 duration-200">
         <h3 className="text-lg font-semibold mb-2 flex items-center gap-2 text-gray-900">
           <LogOut className="w-5 h-5 text-red-600" />
           Xác nhận đăng xuất

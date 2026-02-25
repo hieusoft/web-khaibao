@@ -3,7 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Menu, X } from 'lucide-react';
 
-// Import các sub-components đã tách
+
 import { AgencyInfo } from './AgencyInfo';
 import { UserActions } from './UserActions';
 import { SubNavigation } from './SubNavigation';
@@ -59,7 +59,7 @@ export const Header: React.FC<HeaderProps> = ({
     return (
         <>
             {/* PHẦN NỀN VÀ TOP BAR */}
-            <div className="relative font-['Arimo']" style={{ backgroundImage: `url(${background})`, backgroundSize: 'cover', backgroundPosition: 'center 40%' }}>
+            <div className="relative" style={{ backgroundImage: `url(${background})`, backgroundSize: 'cover', backgroundPosition: 'center 40%' }}>
                 <div className="absolute inset-0 bg-[#F9ECC2] opacity-85"></div>
 
                 <div className="max-w-7xl mx-auto relative z-10">

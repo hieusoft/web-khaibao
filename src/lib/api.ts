@@ -3,9 +3,8 @@ import { ProfileData } from '@/types/auth';
 
 // // API Configuration
 // const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://ksmatuy.icomm.vn/api';
-const API_BASE_URL = '/api';
+const API_BASE_URL = 'http://localhost:8069/api';
 
-// Token storage keys
 const ACCESS_TOKEN_KEY = 'accessToken';
 
 // Create axios instance
@@ -25,7 +24,7 @@ let failedRequestsQueue: Array<{
   reject: (error: Error) => void;
 }> = [];
 
-// Process queue after token refresh
+
 const processQueue = (token: string | null, error: Error | null = null) => {
   failedRequestsQueue.forEach(({ resolve, reject }) => {
     if (error) {

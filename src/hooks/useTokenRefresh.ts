@@ -1,7 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { getTokenTimeRemaining, getRefreshToken } from '@/lib/api';
 
-// Refresh threshold: refresh token 5 minutes before expiration
 const REFRESH_THRESHOLD = 5 * 60;
 
 export const useTokenRefresh = (onRefresh?: () => Promise<void>) => {
