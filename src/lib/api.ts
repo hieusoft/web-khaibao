@@ -1,8 +1,9 @@
 import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from 'axios';
 import { ProfileData } from '@/types/auth';
 
-// API Configuration
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8069/api';
+// // API Configuration
+// const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://ksmatuy.icomm.vn/api';
+const API_BASE_URL = '/api';
 
 // Token storage keys
 const ACCESS_TOKEN_KEY = 'accessToken';
@@ -193,6 +194,33 @@ export const profileApi = {
         new_password: newPassword,
       })
       .then((res) => res.data),
+};
+
+export const importApi = {
+  getAll: (params?: any) =>
+    apiClient.get('/purchase/list', { params }).then((res) => res.data),
+
+  getById: (id: string | number) =>
+    apiClient.get(`/purchase/${id}`).then((res) => res.data),
+
+  create: (data: any) =>
+    apiClient.post('/imports', data).then((res) => res.data),
+
+  update: (id: string | number, data: any) =>
+    apiClient.put(`/imports/${id}`, data).then((res) => res.data),
+
+  delete: (id: string | number) =>
+    apiClient.delete(`/imports/${id}`).then((res) => res.data),
+
+  uploadFile: (formData: FormData) =>
+    apiClient.post('/imports/upload', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    }).then((res) => res.data),
+
+  getDocumentStatus: (id: string | number) =>
+    apiClient.get(`/import/document/${id}`).then((res) => res.data),
 };
 
 export { apiClient };

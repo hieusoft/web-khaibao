@@ -21,7 +21,7 @@ export const LoginForm: React.FC = () => {
 
     try {
       await login({ username, password });
-      navigate('/dashboard');
+      navigate('/declaration/import');
     } catch (err) {
       setError('Invalid username or password');
       console.error('Login error:', err);

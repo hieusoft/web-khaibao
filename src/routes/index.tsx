@@ -7,11 +7,17 @@ import { RegisterPage } from '@/pages/RegisterPage';
 import { DashboardPage } from '@/pages/DashboardPage';
 import { ProfilePage } from '@/pages/ProfilePage';
 import { NotFoundPage } from '@/pages/NotFoundPage';
+import ImportDeclarationList from '@/pages/import_pages_declaration/ImportDeclarationList';
+import CreateImportOrder from '@/pages/import_pages_declaration/create/CreateImportOrder';
 
 export const router = createBrowserRouter([
   {
     path: '/',
-    element: <HomePage />,
+    element: (
+      <ProtectedRoute>
+        <HomePage />
+      </ProtectedRoute>
+    )
   },
   {
     path: '/login',
@@ -46,11 +52,35 @@ export const router = createBrowserRouter([
     ),
   },
   {
+    path: '/declaration/import',
+    element: (
+      <ProtectedRoute>
+        <MainLayout>
+          <ImportDeclarationList />
+        </MainLayout>
+
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/declaration/import/new',
+    element: (
+      <ProtectedRoute>
+        <MainLayout>
+          <CreateImportOrder />
+        </MainLayout>
+
+      </ProtectedRoute>
+    ),
+  },
+  {
     path: '*',
     element: (
-      <MainLayout>
-        <NotFoundPage />
-      </MainLayout>
+      <ProtectedRoute>
+        <MainLayout>
+          <NotFoundPage />
+        </MainLayout>
+      </ProtectedRoute>
     ),
   },
 ]);

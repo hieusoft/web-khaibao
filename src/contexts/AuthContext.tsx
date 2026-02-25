@@ -43,6 +43,34 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [isLoading, setIsLoading] = useState(true);
   const [isProfileLoading, setIsProfileLoading] = useState(false);
 
+  const fetchProfile = useCallback(async (): Promise<ProfileData | null> => {
+    setIsProfileLoading(true);
+    try {
+      const response = await profileApi.get();
+      if (response.success && response.data) {
+        setProfile(response.data);
+        return response.data;
+      }
+      return null;
+    } catch (error) {
+      console.error('Failed to fetch profile:', error);
+      return null;
+    } finally {
+      setIsProfileLoading(false);
+    }
+  }, []);
+
+  const doRefreshToken = useCallback(async (): Promise<void> => {
+    const response = await api.post<LoginResponse>('/auth/refresh');
+    const { data } = response;
+
+    // Save new access token
+    saveAccessToken(data.access_token);
+
+    // Update user
+    const userData = createUserFromResponse(data, data.access_token);
+    setUser(userData);
+  }, []);
   // Initialize auth state from stored tokens
   const initializeAuth = useCallback(async () => {
     const accessToken = getAccessToken();
@@ -52,18 +80,15 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       return;
     }
 
-    // Check if access token is expired
     if (isTokenExpired(accessToken)) {
-      // Try to refresh the token
       try {
         await doRefreshToken();
+        await fetchProfile();
       } catch {
-        // Refresh failed, clear tokens
         clearTokens();
         setUser(null);
       }
     } else {
-      // Token is valid, decode and set user
       try {
         const payload = JSON.parse(atob(accessToken.split('.')[1])) as TokenPayload;
         setUser({
@@ -72,13 +97,16 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           name: payload.login,
           role: payload.type || 'user',
         });
+
+        fetchProfile();
+
       } catch {
         clearTokens();
       }
     }
 
     setIsLoading(false);
-  }, []);
+  }, [doRefreshToken, fetchProfile]);
 
   useEffect(() => {
     initializeAuth();
@@ -99,10 +127,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const login = async (credentials: LoginCredentials): Promise<void> => {
     const response = await api.post<LoginResponse>('/auth/login', credentials);
     const { data } = response;
-    
+
     // Save access token to localStorage
     saveAccessToken(data.access_token);
-    
+
     // Create user from response
     const userData = createUserFromResponse(data, data.access_token);
     setUser(userData);
@@ -111,10 +139,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const register = async (credentials: RegisterCredentials): Promise<void> => {
     const response = await api.post<LoginResponse>('/auth/register', credentials);
     const { data } = response;
-    
+
     // Save access token to localStorage
     saveAccessToken(data.access_token);
-    
+
     // Create user from response
     const userData = createUserFromResponse(data, data.access_token);
     setUser(userData);
@@ -128,34 +156,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     // await api.post('/auth/logout');
   }, []);
 
-  const doRefreshToken = useCallback(async (): Promise<void> => {
-    const response = await api.post<LoginResponse>('/auth/refresh');
-    const { data } = response;
-    
-    // Save new access token
-    saveAccessToken(data.access_token);
-    
-    // Update user
-    const userData = createUserFromResponse(data, data.access_token);
-    setUser(userData);
-  }, []);
 
-  const fetchProfile = useCallback(async (): Promise<ProfileData | null> => {
-    setIsProfileLoading(true);
-    try {
-      const response = await profileApi.get();
-      if (response.success && response.data) {
-        setProfile(response.data);
-        return response.data;
-      }
-      return null;
-    } catch (error) {
-      console.error('Failed to fetch profile:', error);
-      return null;
-    } finally {
-      setIsProfileLoading(false);
-    }
-  }, []);
+
+
 
   const updateProfile = useCallback(async (data: Partial<ProfileData>): Promise<ProfileData> => {
     const response = await profileApi.update(data);
