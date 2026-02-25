@@ -7,9 +7,7 @@ import { RegisterPage } from '@/pages/RegisterPage';
 import { DashboardPage } from '@/pages/DashboardPage';
 import { ProfilePage } from '@/pages/ProfilePage';
 import { NotFoundPage } from '@/pages/NotFoundPage';
-import ImportDeclarationList from '@/pages/import_pages_declaration/ImportDeclarationList';
 import { ImportDeclarationPage } from '@/pages/importdeclarationpage';
-
 
 export const router = createBrowserRouter([
   {

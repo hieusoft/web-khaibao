@@ -1,6 +1,6 @@
 import { Calendar, Package, Clock, Link, Pencil, Trash2 } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { ImportDeclaration } from "../../types/declaration";
+import { ImportDeclaration } from "../../../types/declaration";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
